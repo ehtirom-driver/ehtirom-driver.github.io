@@ -1,5 +1,19 @@
 'use strict';
 
+// ── LIMIT SOZLAMALARI (boshqarish oson) ──────────────────
+// true  = limit bor (kuniga 2 marta - ertalab/kechqurun)
+// false = limit yo'q (xohlagancha yubora oladi)
+const LIMIT_SETTINGS = {
+  'eht.driver01': false,   // ✅ LIMIT YO'Q - istalgancha yubora oladi
+  'eht.driver02': false,    // ✅ LIMIT BOR - kuniga 2 marta
+  'eht.driver03': false,    // ✅ LIMIT BOR - kuniga 2 marta
+};
+
+// ── Yordamchi funksiya: limit bormi? ────────────────────
+function hasLimit(username) {
+  return LIMIT_SETTINGS[username] !== undefined ? LIMIT_SETTINGS[username] : true;
+}
+
 // ── Backend (o'zgarishsiz) ─────────────────────
 const WEB_APP_URL        = 'https://script.google.com/macros/s/AKfycbzZDTc6AtIYdlHQnHIYEDXlg7K-Re1VzyWmmMQbCPo7GOWwTqFYEQ7gqGSDHoeI0ri8/exec';
 const TELEGRAM_BOT_TOKEN = '8561049037:AAEbMoh0BTPRx5mUR99ui-uyg764vGO8spY';
@@ -229,11 +243,18 @@ reportForm.addEventListener('submit', async e => {
   if (!korsatkich) { toast('Ko\'rsatkichni kiriting', 'warning'); return; }
   if (!file)       { toast('Spidometr rasmini oling', 'warning'); return; }
 
-  if (hasSubmitted(currentUser.username, muddat)) {
-    const lbl = muddat === 'ertalab' ? 'ertalabki' : 'kechqurungi';
-    toast(`Bugungi ${lbl} hisobot allaqachon yuborilgan`, 'warning', 4500);
-    return;
+  // ── LIMIT TEKSHIRUVI (FAQAT SHU QISM O'ZGARDI) ─────────
+  const userHasLimit = hasLimit(currentUser.username);
+  
+  if (userHasLimit) {
+    // Limit bor foydalanuvchi - kuniga 2 marta tekshiramiz
+    if (hasSubmitted(currentUser.username, muddat)) {
+      const lbl = muddat === 'ertalab' ? 'ertalabki' : 'kechqurungi';
+      toast(`Bugungi ${lbl} hisobot allaqachon yuborilgan`, 'warning', 4500);
+      return;
+    }
   }
+  // Limit yo'q foydalanuvchi: hech qanday tekshiruvsiz yuboradi
 
   submitBtn.disabled = true;
   submitBtn.innerHTML = `<span class="spinner"></span><span>Yuborilmoqda...</span>`;
@@ -253,10 +274,20 @@ reportForm.addEventListener('submit', async e => {
 
     const [gOk, tOk] = await Promise.all([sendToGoogleSheet(sheetData), sendToTelegram(file, caption)]);
 
-    if (gOk && tOk)       { markSubmitted(currentUser.username, muddat); toast('Hisobot muvaffaqiyatli yuborildi', 'success', 4000); resetForm(); }
-    else if (!gOk && tOk) { toast('Telegramga yuborildi, lekin Google Sheetga yozilmadi', 'warning', 5000); }
-    else if (gOk && !tOk) { toast('Google Sheetga yozildi, lekin Telegramga yuborilmadi', 'warning', 5000); }
-    else                  { toast('Xatolik yuz berdi. Qaytadan urinib ko\'ring', 'error', 5000); }
+    if (gOk && tOk) {
+      // Faqat limit bor foydalanuvchi uchun lokal storage ga yozamiz
+      if (userHasLimit) {
+        markSubmitted(currentUser.username, muddat);
+      }
+      toast('Hisobot muvaffaqiyatli yuborildi', 'success', 4000);
+      resetForm();
+    } else if (!gOk && tOk) {
+      toast('Telegramga yuborildi, lekin Google Sheetga yozilmadi', 'warning', 5000);
+    } else if (gOk && !tOk) {
+      toast('Google Sheetga yozildi, lekin Telegramga yuborilmadi', 'warning', 5000);
+    } else {
+      toast('Xatolik yuz berdi. Qaytadan urinib ko\'ring', 'error', 5000);
+    }
   } catch (err) {
     console.error(err);
     toast('Ulanishda xatolik. Internetni tekshiring', 'error', 5000);
