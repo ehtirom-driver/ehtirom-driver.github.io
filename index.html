@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="EHT Hisobot" />
+  <title>Ehtirom Plus | Haydovchi</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="image.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ── LOGIN ── -->
+  <div id="loginScreen" class="screen active">
+    <div class="app-shell login-shell">
+
+      <div class="login-top">
+        <div class="brand-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
+            <rect x="9" y="11" width="14" height="10" rx="2"/>
+            <circle cx="12" cy="16" r="1"/><circle cx="20" cy="16" r="1"/>
+          </svg>
+        </div>
+        <h1 class="brand-name">Ehtirom Plus</h1>
+        <p class="brand-sub">Haydovchi hisobot tizimi</p>
+      </div>
+
+      <div class="login-card">
+        <form id="loginForm" novalidate>
+
+          <div class="field-group">
+            <label for="loginInput">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+              Login
+            </label>
+            <input type="text" id="loginInput" placeholder="Loginni kiriting"
+              autocomplete="username" autocorrect="off" autocapitalize="off" spellcheck="false" required />
+          </div>
+
+          <div class="field-group">
+            <label for="passwordInput">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Parol
+            </label>
+            <div class="input-wrap">
+              <input type="password" id="passwordInput" placeholder="Parolni kiriting" autocomplete="current-password" required />
+              <button type="button" class="pw-toggle" id="togglePw" aria-label="Parolni ko'rsat">
+                <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="loginBtn">
+            <span>Kirish</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+
+        </form>
+      </div>
+
+      <p class="hint-text">Ma'lumotlar Google Sheets va Telegram orqali xavfsiz uzatiladi</p>
+    </div>
+  </div>
+
+  <!-- ── REPORT ── -->
+  <div id="reportScreen" class="screen">
+    <div class="app-shell report-shell">
+
+      <!-- Header -->
+      <div class="app-header">
+        <div class="user-pill">
+          <div class="avatar" id="avatarEl"></div>
+          <div class="user-meta">
+            <span class="user-name" id="userNameEl"></span>
+            <span class="user-role">Haydovchi</span>
+          </div>
+        </div>
+        <button class="btn-logout" id="logoutBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Chiqish
+        </button>
+      </div>
+
+      <!-- Scrollable content -->
+      <div class="app-content">
+        <form id="reportForm" novalidate>
+
+          <!-- Muddat -->
+          <div class="section-card">
+            <div class="section-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Muddat
+            </div>
+            <div class="segment" id="muddatControl">
+              <button type="button" class="seg-btn" data-value="ertalab" id="segErtalab">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                Ertalab
+              </button>
+              <button type="button" class="seg-btn" data-value="kechqurun" id="segKechqurun">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                Kechqurun
+              </button>
+            </div>
+            <input type="hidden" id="muddat" />
+          </div>
+
+          <!-- Ko'rsatkich -->
+          <div class="section-card">
+            <div class="section-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Spidometr ko'rsatkichi
+            </div>
+            <div class="input-wrap">
+              <input type="text" id="korsatkich" placeholder="Masalan: 124500"
+                inputmode="numeric" pattern="[0-9]*" autocomplete="off" required />
+              <span class="unit-badge">km</span>
+            </div>
+          </div>
+
+          <!-- Rasm — faqat kamera -->
+          <div class="section-card">
+            <div class="section-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Spidometr rasmi
+            </div>
+
+            <!-- Placeholder -->
+            <div class="cam-zone" id="camZone">
+              <div class="cam-placeholder" id="camPlaceholder">
+                <div class="cam-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
+                <span class="cam-label">Kamera orqali rasmga olish</span>
+                <span class="cam-sub">Faqat orqa kamera ishlatiladi</span>
+                <button type="button" class="btn-cam" id="openCamBtn">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  Kamerani ochish
+                </button>
+              </div>
+
+              <!-- Preview -->
+              <div class="cam-preview" id="camPreview" style="display:none">
+                <img id="previewImg" src="" alt="Spidometr" />
+                <button type="button" class="retake-btn" id="retakeBtn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                  Qayta olish
+                </button>
+              </div>
+            </div>
+
+            <!-- Hidden file input — faqat kamera -->
+            <input type="file" id="rasmInput" accept="image/*" capture="environment"
+              style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;" />
+          </div>
+
+          <button type="submit" class="btn-primary" id="submitBtn">
+            <span>Hisobotni yuborish</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+
+        </form>
+
+        <p class="hint-text" style="text-align:center; margin-top:16px;">v2.1 &nbsp;·&nbsp; Ehtirom Plus tizimi</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
