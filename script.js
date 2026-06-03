@@ -7,9 +7,9 @@ const TELEGRAM_CHAT_ID   = '7123672881';
 
 // ── Foydalanuvchilar ───────────────────────────
 const users = {
-  'eht.driver01': { fullName: "Po'latxo'jayev Sa'damxon", password: '17041994' },
-  'eht.driver02': { fullName: 'Nizomov Adxamjon',          password: '01061976' },
-  'eht.driver03': { fullName: 'Alixodjayev Abbosxon',      password: '17041977' },
+  'eht.driver01': { fullName: "Po'latxo'jayev Sa'damxon", password: '111111' },
+  'eht.driver02': { fullName: 'Nizomov Adxamjon',          password: '222222' },
+  'eht.driver03': { fullName: 'Alixodjayev Abbosxon',      password: '333333' },
 };
 
 // ── DOM ────────────────────────────────────────
