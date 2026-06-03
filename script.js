@@ -247,9 +247,9 @@ reportForm.addEventListener('submit', async e => {
       korsatkich: parseInt(korsatkich),
     };
     const caption =
-      `Haydovchi: ${currentUser.fullName}\nLogin: ${currentUser.username}\n` +
-      `Muddat: ${muddat === 'ertalab' ? 'Ertalab' : 'Kechqurun'}\n` +
-      `Ko'rsatkich: ${korsatkich} km\nVaqt: ${new Date().toLocaleString('uz-UZ')}`;
+      `🛻 Haydovchi: ${currentUser.fullName}\n🔑 Login: ${currentUser.username}\n` +
+      `📆 Muddat: ${muddat === 'ertalab' ? '☀️ Ertalab' : '🌙 Kechqurun'}\n` +
+      `📊 Ko'rsatkich: ${korsatkich} km\n⏰ Vaqt: ${new Date().toLocaleString('uz-UZ')}`;
 
     const [gOk, tOk] = await Promise.all([sendToGoogleSheet(sheetData), sendToTelegram(file, caption)]);
 
