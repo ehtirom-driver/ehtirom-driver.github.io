@@ -1,7 +1,7 @@
 'use strict';
 
 // ── Backend (o'zgarishsiz) ─────────────────────
-const WEB_APP_URL        = 'https://script.google.com/macros/s/AKfycbyjvIaOHWxvUmmtrfsV7VCSaUSLqy7UegtUPURdA6AGB5_clREUmDXxTgG9hP8eEJ2REg/exec';
+const WEB_APP_URL        = 'https://script.google.com/macros/s/AKfycbzZDTc6AtIYdlHQnHIYEDXlg7K-Re1VzyWmmMQbCPo7GOWwTqFYEQ7gqGSDHoeI0ri8/exec';
 const TELEGRAM_BOT_TOKEN = '8561049037:AAEbMoh0BTPRx5mUR99ui-uyg764vGO8spY';
 const TELEGRAM_CHAT_ID   = '7123672881';
 
