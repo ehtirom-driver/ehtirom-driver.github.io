@@ -6,7 +6,7 @@
 const LIMIT_SETTINGS = {
   'eht.driver01': true,   // ✅ LIMIT YO'Q - istalgancha yubora oladi
   'eht.driver02': true,    // ✅ LIMIT BOR - kuniga 2 marta
-  'eht.driver03': true,    // ✅ LIMIT BOR - kuniga 2 marta
+  'eht.driver03': false,    // ✅ LIMIT BOR - kuniga 2 marta
 };
 
 // ── Yordamchi funksiya: limit bormi? ────────────────────
