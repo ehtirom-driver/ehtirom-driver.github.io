@@ -208,13 +208,18 @@ logoutBtn.addEventListener('click', () => {
 // ── APIs ───────────────────────────────────────
 async function sendToTelegram(file, caption) {
   try {
-    const fd = new FormData();
-    fd.append('chat_id', TELEGRAM_CHAT_ID);
-    fd.append('photo', file, 'spidometr.jpg');
-    fd.append('caption', caption);
-    const r = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-    const d = await r.json();
-    return d.ok === true;
+    const results = await Promise.all(
+      TELEGRAM_CHAT_ID.map(async (chatId) => {
+        const fd = new FormData();
+        fd.append('chat_id', chatId);
+        fd.append('photo', file, 'spidometr.jpg');
+        fd.append('caption', caption);
+        const r = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+        const d = await r.json();
+        return d.ok === true;
+      })
+    );
+    return results.every(ok => ok);
   } catch { return false; }
 }
 
