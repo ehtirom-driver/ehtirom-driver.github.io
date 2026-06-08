@@ -17,7 +17,14 @@ function hasLimit(username) {
 // ── Backend (o'zgarishsiz) ─────────────────────
 const WEB_APP_URL        = 'https://script.google.com/macros/s/AKfycbzZDTc6AtIYdlHQnHIYEDXlg7K-Re1VzyWmmMQbCPo7GOWwTqFYEQ7gqGSDHoeI0ri8/exec';
 const TELEGRAM_BOT_TOKEN = '8561049037:AAEbMoh0BTPRx5mUR99ui-uyg764vGO8spY';
-const TELEGRAM_CHAT_ID   = ['7123672881','280926130','7238407538','1896162899','1123026662'];
+const TELEGRAM_CHAT_ID = {
+  all:     ['7123672881', '280926130'],
+  personal: {
+    'eht.driver01': '7238407538',
+    'eht.driver02': '1896162899',
+    'eht.driver03': '1123026662',
+  }
+};
 
 // ── Foydalanuvchilar ───────────────────────────
 const users = {
@@ -208,8 +215,15 @@ logoutBtn.addEventListener('click', () => {
 // ── APIs ───────────────────────────────────────
 async function sendToTelegram(file, caption) {
   try {
+    const chatIds = [
+      ...TELEGRAM_CHAT_ID.all,
+      ...(TELEGRAM_CHAT_ID.personal[currentUser.username]
+        ? [TELEGRAM_CHAT_ID.personal[currentUser.username]]
+        : [])
+    ];
+
     const results = await Promise.all(
-      TELEGRAM_CHAT_ID.map(async (chatId) => {
+      chatIds.map(async (chatId) => {
         const fd = new FormData();
         fd.append('chat_id', chatId);
         fd.append('photo', file, 'spidometr.jpg');
