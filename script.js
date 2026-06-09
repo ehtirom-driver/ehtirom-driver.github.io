@@ -1,39 +1,45 @@
 'use strict';
 
-// ── LIMIT SOZLAMALARI (boshqarish oson) ──────────────────
-// true  = limit bor (kuniga 2 marta - ertalab/kechqurun)
-// false = limit yo'q (xohlagancha yubora oladi)
+// ═══════════════════════════════════════════════════════════
+// ██  BOSHQARUV PANELI  ██████████████████████████████████
+// ═══════════════════════════════════════════════════════════
+
+// ── LIMIT SOZLAMALARI ─────────────────────────────────────
+// true  = limit BOR (kuniga 2 marta: ertalab + kechqurun)
+// false = limit YO'Q (xohlagancha yuboradi)
 const LIMIT_SETTINGS = {
-  'eht.driver01': true,   // ✅ LIMIT YO'Q - istalgancha yubora oladi
-  'eht.driver02': true,    // ✅ LIMIT BOR - kuniga 2 marta
-  'eht.driver03': false,    // ✅ LIMIT BOR - kuniga 2 marta
+  'eht.driver01': true,
+  'eht.driver02': true,
+  'eht.driver03': true,
 };
 
-// ── Yordamchi funksiya: limit bormi? ────────────────────
-function hasLimit(username) {
-  return LIMIT_SETTINGS[username] !== undefined ? LIMIT_SETTINGS[username] : true;
-}
+// ── TELEGRAM MANZIL ───────────────────────────────────────
+// Barcha xabarlar shu bitta chat ID ga boradi
+const TELEGRAM_CHAT_ID_TARGET = '7123672881';
 
-// ── Backend (o'zgarishsiz) ─────────────────────
+// ═══════════════════════════════════════════════════════════
+// ██  BACKEND (O'ZGARTIRMANG)  ███████████████████████████
+// ═══════════════════════════════════════════════════════════
+
 const WEB_APP_URL        = 'https://script.google.com/macros/s/AKfycbzZDTc6AtIYdlHQnHIYEDXlg7K-Re1VzyWmmMQbCPo7GOWwTqFYEQ7gqGSDHoeI0ri8/exec';
 const TELEGRAM_BOT_TOKEN = '8561049037:AAEbMoh0BTPRx5mUR99ui-uyg764vGO8spY';
-const TELEGRAM_CHAT_ID = {
-  all:     ['7123672881', '280926130'],
-  personal: {
-    'eht.driver01': '7238407538',
-    'eht.driver02': '1896162899',
-    'eht.driver03': '1123026662',
-  }
-};
 
-// ── Foydalanuvchilar ───────────────────────────
+// ── Foydalanuvchilar ───────────────────────────────────────
 const users = {
   'eht.driver01': { fullName: "Po'latxo'jayev Sa'damxon", password: '111111' },
   'eht.driver02': { fullName: 'Nizomov Adxamjon',          password: '222222' },
   'eht.driver03': { fullName: 'Alixodjayev Abbosxon',      password: '333333' },
 };
 
-// ── DOM ────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+// ██  YORDAMCHI FUNKSIYALAR  █████████████████████████████
+// ═══════════════════════════════════════════════════════════
+
+function hasLimit(username) {
+  return LIMIT_SETTINGS[username] !== undefined ? LIMIT_SETTINGS[username] : true;
+}
+
+// ── DOM ────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 
 const loginScreen    = $('loginScreen');
@@ -62,7 +68,7 @@ const toastContainer = $('toastContainer');
 
 let currentUser = null;
 
-// ── Toast ──────────────────────────────────────
+// ── Toast ──────────────────────────────────────────────────
 const T_ICONS = {
   success: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
   error:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
@@ -81,18 +87,18 @@ function toast(text, type = 'info', ms = 3500) {
   }, ms);
 }
 
-// ── Storage ────────────────────────────────────
-const dayKey = (u, m) => `${u}_${m}_${new Date().toDateString()}`;
-const hasSubmitted = (u, m) => localStorage.getItem(dayKey(u, m)) === 'ok';
+// ── Storage ────────────────────────────────────────────────
+const dayKey      = (u, m) => `${u}_${m}_${new Date().toDateString()}`;
+const hasSubmitted  = (u, m) => localStorage.getItem(dayKey(u, m)) === 'ok';
 const markSubmitted = (u, m) => localStorage.setItem(dayKey(u, m), 'ok');
 
-// ── Helpers ────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────
 function initials(name) {
   const p = name.trim().split(/\s+/);
   return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
 }
 
-// ── Password toggle ────────────────────────────
+// ── Password toggle ────────────────────────────────────────
 togglePw.addEventListener('click', () => {
   const show = passwordInput.type === 'password';
   passwordInput.type = show ? 'text' : 'password';
@@ -101,12 +107,12 @@ togglePw.addEventListener('click', () => {
     : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
 });
 
-// ── Numbers only ───────────────────────────────
+// ── Numbers only ───────────────────────────────────────────
 korsatkichInput.addEventListener('input', function () {
   this.value = this.value.replace(/[^0-9]/g, '');
 });
 
-// ── Segment ────────────────────────────────────
+// ── Segment ────────────────────────────────────────────────
 [segErtalab, segKechqurun].forEach(btn => {
   btn.addEventListener('click', () => {
     segErtalab.classList.remove('active');
@@ -116,7 +122,7 @@ korsatkichInput.addEventListener('input', function () {
   });
 });
 
-// ── Camera — faqat kamera, fayl emas ──────────
+// ── Camera ─────────────────────────────────────────────────
 openCamBtn.addEventListener('click', () => rasmInput.click());
 retakeBtn.addEventListener('click', () => {
   rasmInput.value = '';
@@ -148,7 +154,7 @@ rasmInput.addEventListener('change', (e) => {
   reader.readAsDataURL(file);
 });
 
-// ── Screen transitions ─────────────────────────
+// ── Screen transitions ─────────────────────────────────────
 function showScreen(show, hide) {
   hide.classList.remove('active', 'slide-in');
   hide.classList.add('slide-out');
@@ -188,7 +194,7 @@ function resetForm() {
   camPlaceholder.style.display = 'flex';
 }
 
-// ── Login ──────────────────────────────────────
+// ── Login ──────────────────────────────────────────────────
 loginForm.addEventListener('submit', e => {
   e.preventDefault();
   const login    = loginInput.value.trim().toLowerCase();
@@ -205,35 +211,26 @@ loginForm.addEventListener('submit', e => {
   }
 });
 
-// ── Logout ─────────────────────────────────────
+// ── Logout ─────────────────────────────────────────────────
 logoutBtn.addEventListener('click', () => {
   currentUser = null;
   sessionStorage.removeItem('cu');
   goLogin();
 });
 
-// ── APIs ───────────────────────────────────────
+// ── APIs ───────────────────────────────────────────────────
 async function sendToTelegram(file, caption) {
   try {
-    const chatIds = [
-      ...TELEGRAM_CHAT_ID.all,
-      ...(TELEGRAM_CHAT_ID.personal[currentUser.username]
-        ? [TELEGRAM_CHAT_ID.personal[currentUser.username]]
-        : [])
-    ];
-
-    const results = await Promise.all(
-      chatIds.map(async (chatId) => {
-        const fd = new FormData();
-        fd.append('chat_id', chatId);
-        fd.append('photo', file, 'spidometr.jpg');
-        fd.append('caption', caption);
-        const r = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-        const d = await r.json();
-        return d.ok === true;
-      })
+    const fd = new FormData();
+    fd.append('chat_id', TELEGRAM_CHAT_ID_TARGET);
+    fd.append('photo', file, 'spidometr.jpg');
+    fd.append('caption', caption);
+    const r = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`,
+      { method: 'POST', body: fd }
     );
-    return results.every(ok => ok);
+    const d = await r.json();
+    return d.ok === true;
   } catch { return false; }
 }
 
@@ -249,7 +246,7 @@ async function sendToGoogleSheet(data) {
   } catch { return false; }
 }
 
-// ── Submit ─────────────────────────────────────
+// ── Submit ─────────────────────────────────────────────────
 reportForm.addEventListener('submit', async e => {
   e.preventDefault();
   if (!currentUser) { toast('Sessiya tugagan, qayta kiring', 'warning'); goLogin(); return; }
@@ -262,18 +259,14 @@ reportForm.addEventListener('submit', async e => {
   if (!korsatkich) { toast('Ko\'rsatkichni kiriting', 'warning'); return; }
   if (!file)       { toast('Spidometr rasmini oling', 'warning'); return; }
 
-  // ── LIMIT TEKSHIRUVI (FAQAT SHU QISM O'ZGARDI) ─────────
-  const userHasLimit = hasLimit(currentUser.username);
-  
-  if (userHasLimit) {
-    // Limit bor foydalanuvchi - kuniga 2 marta tekshiramiz
+  // ── Limit tekshiruvi ──────────────────────────────────
+  if (hasLimit(currentUser.username)) {
     if (hasSubmitted(currentUser.username, muddat)) {
       const lbl = muddat === 'ertalab' ? 'ertalabki' : 'kechqurungi';
       toast(`Bugungi ${lbl} hisobot allaqachon yuborilgan`, 'warning', 4500);
       return;
     }
   }
-  // Limit yo'q foydalanuvchi: hech qanday tekshiruvsiz yuboradi
 
   submitBtn.disabled = true;
   submitBtn.innerHTML = `<span class="spinner"></span><span>Yuborilmoqda...</span>`;
@@ -294,8 +287,7 @@ reportForm.addEventListener('submit', async e => {
     const [gOk, tOk] = await Promise.all([sendToGoogleSheet(sheetData), sendToTelegram(file, caption)]);
 
     if (gOk && tOk) {
-      // Faqat limit bor foydalanuvchi uchun lokal storage ga yozamiz
-      if (userHasLimit) {
+      if (hasLimit(currentUser.username)) {
         markSubmitted(currentUser.username, muddat);
       }
       toast('Hisobot muvaffaqiyatli yuborildi', 'success', 4000);
@@ -316,7 +308,7 @@ reportForm.addEventListener('submit', async e => {
   }
 });
 
-// ── Init ───────────────────────────────────────
+// ── Init ───────────────────────────────────────────────────
 (function init() {
   try {
     const saved = sessionStorage.getItem('cu');
