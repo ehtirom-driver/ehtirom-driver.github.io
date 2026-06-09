@@ -9,7 +9,7 @@
 // false = limit YO'Q (xohlagancha yuboradi)
 const LIMIT_SETTINGS = {
   'eht.driver01': true,
-  'eht.driver02': true,
+  'eht.driver02': false,
   'eht.driver03': true,
 };
 
@@ -88,7 +88,7 @@ function toast(text, type = 'info', ms = 3500) {
 }
 
 // ── Storage ────────────────────────────────────────────────
-const dayKey      = (u, m) => `${u}_${m}_${new Date().toDateString()}`;
+const dayKey        = (u, m) => `${u}_${m}_${new Date().toDateString()}`;
 const hasSubmitted  = (u, m) => localStorage.getItem(dayKey(u, m)) === 'ok';
 const markSubmitted = (u, m) => localStorage.setItem(dayKey(u, m), 'ok');
 
@@ -218,22 +218,84 @@ logoutBtn.addEventListener('click', () => {
   goLogin();
 });
 
-// ── APIs ───────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+// ██  API FUNKSIYALARI  ██████████████████████████████████
+// ═══════════════════════════════════════════════════════════
+
+// ── Rasmni JPEG Blob ga aylantirish ───────────────────────
+// Telegram ba'zan HEIC / raw camera formatlarini qabul qilmaydi.
+// Canvas orqali qayta encode qilsak, har doim JPEG chiqadi.
+function fileToJpegBlob(file, maxSide = 2048, quality = 0.88) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      // O'lchamni kamaytirish (kerak bo'lsa)
+      let { width, height } = img;
+      if (width > maxSide || height > maxSide) {
+        if (width >= height) { height = Math.round(height * maxSide / width);  width = maxSide; }
+        else                 { width  = Math.round(width  * maxSide / height); height = maxSide; }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width  = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        blob => blob ? resolve(blob) : reject(new Error('Canvas toBlob failed')),
+        'image/jpeg',
+        quality
+      );
+    };
+
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
+    img.src = url;
+  });
+}
+
+// ── Telegram ───────────────────────────────────────────────
 async function sendToTelegram(file, caption) {
   try {
+    // Avval rasmni JPEG ga o'tkazamiz
+    const jpegBlob = await fileToJpegBlob(file);
+
     const fd = new FormData();
     fd.append('chat_id', TELEGRAM_CHAT_ID_TARGET);
-    fd.append('photo', file, 'spidometr.jpg');
+    fd.append('photo',   jpegBlob, 'spidometr.jpg');
     fd.append('caption', caption);
+    fd.append('parse_mode', 'HTML');
+
     const r = await fetch(
       `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`,
       { method: 'POST', body: fd }
     );
+
+    // Telegram har doim JSON qaytaradi
     const d = await r.json();
-    return d.ok === true;
-  } catch { return false; }
+
+    if (!d.ok) {
+      // Xato sababini console da ko'rish uchun
+      console.error('[Telegram] xato:', d.error_code, d.description);
+      // Foydalanuvchiga aniqroq xabar
+      const reason = d.description || 'Noma\'lum xato';
+      toast(`Telegram: ${reason}`, 'error', 6000);
+      return false;
+    }
+
+    return true;
+
+  } catch (err) {
+    console.error('[Telegram] fetch xatosi:', err);
+    return false;
+  }
 }
 
+// ── Google Sheets ──────────────────────────────────────────
+// Bu qism O'ZGARMAGAN — asl mantiq saqlanib qolgan
 async function sendToGoogleSheet(data) {
   try {
     await fetch(WEB_APP_URL, {
@@ -279,18 +341,22 @@ reportForm.addEventListener('submit', async e => {
       muddat,
       korsatkich: parseInt(korsatkich),
     };
+
     const caption =
       `🛻 Haydovchi: ${currentUser.fullName}\n🔑 Login: ${currentUser.username}\n` +
       `📆 Muddat: ${muddat === 'ertalab' ? '☀️ Ertalab' : '🌙 Kechqurun'}\n` +
       `📊 Ko'rsatkich: ${korsatkich} km\n⏰ Vaqt: ${new Date().toLocaleString('uz-UZ')}`;
 
-    const [gOk, tOk] = await Promise.all([sendToGoogleSheet(sheetData), sendToTelegram(file, caption)]);
+    const [gOk, tOk] = await Promise.all([
+      sendToGoogleSheet(sheetData),
+      sendToTelegram(file, caption),
+    ]);
 
     if (gOk && tOk) {
       if (hasLimit(currentUser.username)) {
         markSubmitted(currentUser.username, muddat);
       }
-      toast('Hisobot muvaffaqiyatli yuborildi', 'success', 4000);
+      toast('Hisobot muvaffaqiyatli yuborildi ✅', 'success', 4000);
       resetForm();
     } else if (!gOk && tOk) {
       toast('Telegramga yuborildi, lekin Google Sheetga yozilmadi', 'warning', 5000);
@@ -300,7 +366,7 @@ reportForm.addEventListener('submit', async e => {
       toast('Xatolik yuz berdi. Qaytadan urinib ko\'ring', 'error', 5000);
     }
   } catch (err) {
-    console.error(err);
+    console.error('[Submit] xato:', err);
     toast('Ulanishda xatolik. Internetni tekshiring', 'error', 5000);
   } finally {
     submitBtn.disabled = false;
