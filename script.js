@@ -22,7 +22,7 @@ const TELEGRAM_CHAT_ID_TARGET = '7123672881';
 // ═══════════════════════════════════════════════════════════
 
 const WEB_APP_URL        = 'https://script.google.com/macros/s/AKfycbzZDTc6AtIYdlHQnHIYEDXlg7K-Re1VzyWmmMQbCPo7GOWwTqFYEQ7gqGSDHoeI0ri8/exec';
-const TELEGRAM_BOT_TOKEN = '8561049037:AAEbMoh0BTPRx5mUR99ui-uyg764vGO8spY';
+const TELEGRAM_BOT_TOKEN = '8561049037:AAF8CQ30TzZ-F1F6hByfh92CGf6TcFBkNzc';
 
 // ── Foydalanuvchilar ───────────────────────────────────────
 const users = {
