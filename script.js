@@ -27,7 +27,7 @@ const TELEGRAM_BOT_TOKEN = '8561049037:AAF8CQ30TzZ-F1F6hByfh92CGf6TcFBkNzc';
 // ── Foydalanuvchilar ───────────────────────────────────────
 const users = {
   'eht.driver01': { fullName: "Po'latxo'jayev Sa'damxon", password: '111111' },
-  'отабек': { fullName: 'Nizomov Adxamjon',          password: '222222' },
+  'отабек': { fullName: 'Usmonov Otabek',            password: '222222' },
   'eht.driver03': { fullName: 'Alixodjayev Abbosxon',      password: '333333' },
 };
 
