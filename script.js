@@ -29,6 +29,8 @@ const users = {
   'eht.driver01': { fullName: "Po'latxo'jayev Sa'damxon", password: '111111' },
   'отабек': { fullName: 'Usmonov Otabek',            password: '222222' },
   'eht.driver03': { fullName: 'Alixodjayev Abbosxon',      password: '333333' },
+  'akramov': { fullName: 'Akramov Sarvarjon',         password: '444444' },
+  'botirov': { fullName: 'Botirov Azizjon',           password: '555555' },
 };
 
 // ═══════════════════════════════════════════════════════════
